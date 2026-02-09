@@ -27,6 +27,11 @@ impl Get {
         &self.key
     }
 
+    /// Get the length of the key
+    pub fn key_len(&self) -> usize {
+        self.key.len()
+    }
+
     /// Parse a `Get` instance from a received frame.
     ///
     /// The `Parse` argument provides a cursor-like API to read fields from the
@@ -63,6 +68,7 @@ impl Get {
     #[instrument(skip(self, db, dst))]
     pub(crate) async fn apply(self, db: &Db, dst: &mut Connection) -> crate::Result<()> {
         // Get the value from the shared database state
+        debug!("GET key={} (len={})", self.key, self.key_len());
         let response = if let Some(value) = db.get(&self.key) {
             // If a value is present, it is written to the client in "bulk"
             // format.
