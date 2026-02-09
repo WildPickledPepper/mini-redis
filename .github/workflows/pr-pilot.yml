@@ -1,0 +1,42 @@
+# PR-Pilot: AI-powered code review
+name: PR-Pilot Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache PR-Pilot knowledge base
+        uses: actions/cache@v4
+        with:
+          path: |
+            chroma_db/
+            call_graphs/
+            co_change_data/
+            clone_data/
+          key: pr-pilot-${{ github.repository }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: |
+            pr-pilot-${{ github.repository }}-
+
+      - name: Run PR-Pilot
+        uses: WildPickledPepper/pr-pilot@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deepseek_api_key: ${{ secrets.DEEPSEEK_API_KEY }}
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          openai_base_url: ${{ secrets.OPENAI_BASE_URL }}
+          analysis_mode: 'two-stage'
+          retrieval_mode: 'precise'
+          top_k: '5'
