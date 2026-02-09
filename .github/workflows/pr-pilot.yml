@@ -37,6 +37,7 @@ jobs:
           deepseek_api_key: ${{ secrets.DEEPSEEK_API_KEY }}
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
           openai_base_url: ${{ secrets.OPENAI_BASE_URL }}
+          deepseek_base_url: ${{ secrets.DEEPSEEK_BASE_URL }}
           analysis_mode: 'two-stage'
           retrieval_mode: 'precise'
           top_k: '5'
